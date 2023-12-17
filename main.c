@@ -5,22 +5,22 @@
 
 
 
-#define TASK_CLOCK          0
-#define TASK_TEMPERATURE    1
-#define TASK_VOLTAGE        2
-#define TASK_FREQUENCY      3
+#define     TASK_CLOCK          0
+#define     TASK_TEMPERATURE    1
+#define     TASK_VOLTAGE        2
+#define     TASK_FREQUENCY      3
 
-#define DAY_PLUS            1
-#define DAY_MINUS           2
-#define MONTH_PLUS          3
-#define MONTH_MINUS         4
+#define     AY_PLUS             1
+#define     DAY_MINUS           2
+#define     MONTH_PLUS          3
+#define     MONTH_MINUS         4
 
-#define NO_SET              0
-#define SET_SEC             1
-#define SET_MIN             2
-#define SET_HOUR            3
-#define SET_DAY             4
-#define SET_MONTH           5
+#define     NO_SET              0
+#define     SET_SEC             1
+#define     SET_MIN             2
+#define     SET_HOUR            3
+#define     SET_DAY             4
+#define     SET_MONTH           5
 
 
 long temp;                                              //¡Ÿ ±±‰¡ø
