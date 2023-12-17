@@ -1,0 +1,11 @@
+"./main.obj"
+"./src/HT1621.obj"
+"./src/I2C.obj"
+"./src/LCD_128.obj"
+"./src/TCA6416A.obj"
+"./src/UART_Event.obj"
+"./src/UART_FIFO.obj"
+"./src/UART_Global.obj"
+"./src/UART_init.obj"
+"../lnk_msp430g2553.cmd"
+-llibc.a
