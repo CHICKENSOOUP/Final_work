@@ -23,21 +23,21 @@
 #define     SET_MONTH           5
 
 
-long temp;                                              //临时变量
-long IntDeg;                                            //温度
-long voltage;                                           //电压
-char task=0;                                            //当前显示状态
-int sec=0,min=0,hour=0,day=16,month=12;                 //定义 秒 分 时 日 月
-char timing=1;                                          //计时运行标志
-char clock_change;                                      //正在修改的时钟位数
-char light;                                             //亮起熄灭lcd信号
-long timestamp = 0;                                     //时间戳
-int capvalue_1 = 0;                                     //第一次捕捉值
-int capvalue_2 = 0;                                     //第二次捕捉值
-long timestamp_1 = 0;                                   //第一次时间戳
-long timestamp_2 = 0;                                   //第二次时间戳
-long totaltime = 0;                                     //两次触发时间间隔
-float freq = 0;                                         //计算到的频率
+long        temp;                                              //临时变量
+long        IntDeg;                                            //温度
+long        voltage;                                           //电压
+char        task=0;                                            //当前显示状态
+int         sec=0,min=14,hour=9,day=16,month=12;                //定义 秒 分 时 日 月
+char        timing=1;                                          //计时运行标志
+char        clock_change;                                      //正在修改的时钟位数
+char        light;                                             //亮起熄灭lcd信号
+long        timestamp = 0;                                     //时间戳
+int         capvalue_1 = 0;                                     //第一次捕捉值
+int         capvalue_2 = 0;                                     //第二次捕捉值
+long        timestamp_1 = 0;                                   //第一次时间戳
+long        timestamp_2 = 0;                                   //第二次时间戳
+long        totaltime = 0;                                     //两次触发时间间隔
+float       freq = 0;                                         //计算到的频率
 
 
 void InitSystemClock(void);
@@ -56,17 +56,16 @@ void change_month_day(int state);
 /*主函数*/
 void main(void)
 {
-    WDTCTL = WDTPW + WDTHOLD;   //关狗
-    InitSystemClock();                         //初始化系统时钟
-    TIME_Init();                               //初始化定时器
-    LCD_Init();                                //初始化LCD
+    WDTCTL = WDTPW + WDTHOLD;                   //关狗
 
-    _enable_interrupts();                      //使能总中断
+    InitSystemClock();                          //初始化系统时钟
+    TIME_Init();                                //初始化定时器
+    LCD_Init();                                 //初始化LCD
+    _enable_interrupts();                       //使能总中断
     while(1)
     {
         PinIN();
         I2C_IODect();
-
         switch(task)
         {
             case TASK_CLOCK:                clock();            break;
@@ -78,6 +77,8 @@ void main(void)
 
     }
 }
+
+
 /*初始化系统时钟*/
 void InitSystemClock(void)
 {
@@ -116,6 +117,7 @@ void ADC10_Temperature_Init(void)
 
 }
 
+
 void ADC10_Voltage_Init(void)
 {
     ADC10CTL0 &= ~ENC;
@@ -125,6 +127,7 @@ void ADC10_Voltage_Init(void)
     __delay_cycles(3000);
     ADC10CTL0 |= ENC;
 }
+
 
 /*初始化定时器*/
 void TIME_Init(void)
@@ -140,6 +143,8 @@ void TIME_Init(void)
     __bis_SR_register(GIE);
 
 }
+
+
 /*初始化测频定时器捕捉*/
 void Capture_Init(void)
 {
@@ -152,6 +157,8 @@ void Capture_Init(void)
     //P1.2选择为Timer0_A3.CCI1A
     P1SEL |= BIT2;
 }
+
+
 
 /*显示时间*/
 void clock(void)
@@ -263,6 +270,8 @@ void clock(void)
     }
     HT1621_Reflash(LCD_Buffer);                //更新显存
 }
+
+
 
 /*显示温度*/
 void thermometer(void)
@@ -393,6 +402,7 @@ void freqmeter(void)
     TA0CTL &= ~TAIE;
     TA0CCTL1 &= ~CCIE;
 }
+
 
 
 void I2C_IODect(void)                            //检测事件确实发生了
@@ -733,6 +743,8 @@ void change_month_day(int state)
         default:    break;
     }
 }
+
+
 #pragma vector = TIMER0_A1_VECTOR
 __interrupt void Time0_Tick(void)
 {
@@ -763,6 +775,9 @@ __interrupt void Time0_Tick(void)
         default:break;
     }
 }
+
+
+
 #pragma vector = TIMER1_A1_VECTOR
 __interrupt void Time1_Tick(void)
 {
@@ -805,5 +820,3 @@ __interrupt void Time1_Tick(void)
             break;
     }
 }
-
-
