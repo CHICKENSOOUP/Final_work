@@ -10,7 +10,7 @@
 #define     TASK_VOLTAGE        2
 #define     TASK_FREQUENCY      3
 
-#define     AY_PLUS             1
+#define     DAY_PLUS             1
 #define     DAY_MINUS           2
 #define     MONTH_PLUS          3
 #define     MONTH_MINUS         4
@@ -23,21 +23,21 @@
 #define     SET_MONTH           5
 
 
-long        temp;                                              //ÁÙÊ±±äÁ¿
-long        IntDeg;                                            //ÎÂ¶È
-long        voltage;                                           //µçÑ¹
-char        task=0;                                            //µ±Ç°ÏÔÊ¾×´Ì¬
-int         sec=0,min=14,hour=9,day=16,month=12;                //¶¨Òå Ãë ·Ö Ê± ÈÕ ÔÂ
-char        timing=1;                                          //¼ÆÊ±ÔËĞĞ±êÖ¾
-char        clock_change;                                      //ÕıÔÚĞŞ¸ÄµÄÊ±ÖÓÎ»Êı
-char        light;                                             //ÁÁÆğÏ¨ÃğlcdĞÅºÅ
-long        timestamp = 0;                                     //Ê±¼ä´Á
-int         capvalue_1 = 0;                                     //µÚÒ»´Î²¶×½Öµ
-int         capvalue_2 = 0;                                     //µÚ¶ş´Î²¶×½Öµ
-long        timestamp_1 = 0;                                   //µÚÒ»´ÎÊ±¼ä´Á
-long        timestamp_2 = 0;                                   //µÚ¶ş´ÎÊ±¼ä´Á
-long        totaltime = 0;                                     //Á½´Î´¥·¢Ê±¼ä¼ä¸ô
-float       freq = 0;                                         //¼ÆËãµ½µÄÆµÂÊ
+long        temp;                                              //ä¸´æ—¶å˜é‡
+long        IntDeg;                                            //æ¸©åº¦
+long        voltage;                                           //ç”µå‹
+char        task=0;                                            //å½“å‰æ˜¾ç¤ºçŠ¶æ€
+int         sec=0,min=14,hour=9,day=16,month=12;                //å®šä¹‰ ç§’ åˆ† æ—¶ æ—¥ æœˆ
+char        timing=1;                                          //è®¡æ—¶è¿è¡Œæ ‡å¿—
+char        clock_change;                                      //æ­£åœ¨ä¿®æ”¹çš„æ—¶é’Ÿä½æ•°
+char        light;                                             //äº®èµ·ç†„ç­lcdä¿¡å·
+long        timestamp = 0;                                     //æ—¶é—´æˆ³
+int         capvalue_1 = 0;                                     //ç¬¬ä¸€æ¬¡æ•æ‰å€¼
+int         capvalue_2 = 0;                                     //ç¬¬äºŒæ¬¡æ•æ‰å€¼
+long        timestamp_1 = 0;                                   //ç¬¬ä¸€æ¬¡æ—¶é—´æˆ³
+long        timestamp_2 = 0;                                   //ç¬¬äºŒæ¬¡æ—¶é—´æˆ³
+long        totaltime = 0;                                     //ä¸¤æ¬¡è§¦å‘æ—¶é—´é—´éš”
+float       freq = 0;                                         //è®¡ç®—åˆ°çš„é¢‘ç‡
 
 
 void InitSystemClock(void);
@@ -53,15 +53,15 @@ void I2C_IODect(void);
 void change_month_day(int state);
 
 
-/*Ö÷º¯Êı*/
+/*ä¸»å‡½æ•°*/
 void main(void)
 {
-    WDTCTL = WDTPW + WDTHOLD;                   //¹Ø¹·
+    WDTCTL = WDTPW + WDTHOLD;                   //å…³ç‹—
 
-    InitSystemClock();                          //³õÊ¼»¯ÏµÍ³Ê±ÖÓ
-    TIME_Init();                                //³õÊ¼»¯¶¨Ê±Æ÷
-    LCD_Init();                                 //³õÊ¼»¯LCD
-    _enable_interrupts();                       //Ê¹ÄÜ×ÜÖĞ¶Ï
+    InitSystemClock();                          //åˆå§‹åŒ–ç³»ç»Ÿæ—¶é’Ÿ
+    TIME_Init();                                //åˆå§‹åŒ–å®šæ—¶å™¨
+    LCD_Init();                                 //åˆå§‹åŒ–LCD
+    _enable_interrupts();                       //ä½¿èƒ½æ€»ä¸­æ–­
     while(1)
     {
         PinIN();
@@ -79,20 +79,20 @@ void main(void)
 }
 
 
-/*³õÊ¼»¯ÏµÍ³Ê±ÖÓ*/
+/*åˆå§‹åŒ–ç³»ç»Ÿæ—¶é’Ÿ*/
 void InitSystemClock(void)
 {
-    /*ÅäÖÃDCOÎª1MHz*/
+    /*é…ç½®DCOä¸º1MHz*/
     DCOCTL = CALDCO_1MHZ;
     BCSCTL1 = CALBC1_1MHZ;
-    /*ÅäÖÃSMCLKµÄÊ±ÖÓÔ´ÎªDCO*/
+    /*é…ç½®SMCLKçš„æ—¶é’Ÿæºä¸ºDCO*/
     BCSCTL2 &= ~SELS;
-    /*SMCLKµÄ·ÖÆµÏµÊıÖÃÎª1*/
+    /*SMCLKçš„åˆ†é¢‘ç³»æ•°ç½®ä¸º1*/
     BCSCTL2 &= ~(DIVS0 | DIVS1);
 }
 
 
-/*³õÊ¼»¯LCD*/
+/*åˆå§‹åŒ–LCD*/
 void LCD_Init(void)
 {
     TCA6416A_Init();
@@ -106,7 +106,7 @@ void LCD_Init(void)
 }
 
 
-/*³õÊ¼»¯ADC*/
+/*åˆå§‹åŒ–ADC*/
 void ADC10_Temperature_Init(void)
 {
     ADC10CTL0 &= ~ENC;
@@ -129,44 +129,44 @@ void ADC10_Voltage_Init(void)
 }
 
 
-/*³õÊ¼»¯¶¨Ê±Æ÷*/
+/*åˆå§‹åŒ–å®šæ—¶å™¨*/
 void TIME_Init(void)
 {
-    /*ÉèÖÃÊ±ÖÓÔ´ÎªSMCLK*/
+    /*è®¾ç½®æ—¶é’Ÿæºä¸ºSMCLK*/
     TA1CTL |= TASSEL_2;
-    /*ÉèÖÃ¹¤×÷Ä£Ê½ÎªUp Mode*/
+    /*è®¾ç½®å·¥ä½œæ¨¡å¼ä¸ºUp Mode*/
     TA1CTL |= MC_1;
-    /*ÉèÖÃ¶¨Ê±¼ä¸ô*/
+    /*è®¾ç½®å®šæ—¶é—´éš”*/
     TA1CCR0 = 49999;// 50ms 1MHz 1/1MHz 1ns 50ms / 1ns = 50000 50000 - 1 = 49999
-    /*¿ªÆôTAIFGÖĞ¶Ï*/
+    /*å¼€å¯TAIFGä¸­æ–­*/
     TA1CTL |= TAIE;
     __bis_SR_register(GIE);
 
 }
 
 
-/*³õÊ¼»¯²âÆµ¶¨Ê±Æ÷²¶×½*/
+/*åˆå§‹åŒ–æµ‹é¢‘å®šæ—¶å™¨æ•æ‰*/
 void Capture_Init(void)
 {
-    /*ÉèÖÃÊ±ÖÓÔ´ÎªSMCLKÉèÖÃ¹¤×÷Ä£Ê½ÎªUp Mode¿ªÆôTAIFGÖĞ¶Ï*/
+    /*è®¾ç½®æ—¶é’Ÿæºä¸ºSMCLKè®¾ç½®å·¥ä½œæ¨¡å¼ä¸ºUp Modeå¼€å¯TAIFGä¸­æ–­*/
     TA0CTL |= TASSEL_2+MC_1+TAIE;
-    /*ÉèÖÃ¶¨Ê±¼ä¸ô*/
+    /*è®¾ç½®å®šæ—¶é—´éš”*/
     TA0CCR0 = 49999;//50ms
-    /*TA1,CCR1ÓÃÓÚ²¶×½¹¦ÄÜÉÏÉıÑØ²¶×½P1.2×÷Îª²¶×½ÊäÈë(CCI2A)ÔÊĞí²¶×½±È½ÏÖĞ¶Ï*/
+    /*TA1,CCR1ç”¨äºæ•æ‰åŠŸèƒ½ä¸Šå‡æ²¿æ•æ‰P1.2ä½œä¸ºæ•æ‰è¾“å…¥(CCI2A)å…è®¸æ•æ‰æ¯”è¾ƒä¸­æ–­*/
     TA0CCTL1 |= CAP+CM_1+CCIS_0+CCIE;
-    //P1.2Ñ¡ÔñÎªTimer0_A3.CCI1A
+    //P1.2é€‰æ‹©ä¸ºTimer0_A3.CCI1A
     P1SEL |= BIT2;
 }
 
 
 
-/*ÏÔÊ¾Ê±¼ä*/
+/*æ˜¾ç¤ºæ—¶é—´*/
 void clock(void)
 {
     LCD_DisplaySeg(_LCD_COLON0);
     LCD_DisplaySeg(_LCD_COLON1);
 
-    /*ÏÔÊ¾ÈÕÆÚ*/
+    /*æ˜¾ç¤ºæ—¥æœŸ*/
     LCD_DisplayDigit(month/10,10);
     LCD_DisplayDigit(month%10,9);
     LCD_DisplayDigit(day/10,8);
@@ -180,16 +180,16 @@ void clock(void)
 
     if(clock_change==SET_SEC)
     {
-        /*ÃëÉÁË¸*/
+        /*ç§’é—ªçƒ*/
         if(light)
         {
-            /*ÏÔÊ¾Ãë*/
+            /*æ˜¾ç¤ºç§’*/
             LCD_DisplayDigit(sec/10,5);
             LCD_DisplayDigit(sec%10,6);
         }
         else if(~light)
         {
-            /*Çå³ıÃë*/
+            /*æ¸…é™¤ç§’*/
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,5);
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,6);
         }
@@ -198,16 +198,16 @@ void clock(void)
     }
     else if(clock_change==SET_MIN)
     {
-        /*·ÖÉÁË¸*/
+        /*åˆ†é—ªçƒ*/
         if(light)
         {
-            /*ÏÔÊ¾·Ö*/
+            /*æ˜¾ç¤ºåˆ†*/
             LCD_DisplayDigit(min/10,3);
             LCD_DisplayDigit(min%10,4);
         }
         else if(~light)
         {
-            /*Çå³ı·Ö*/
+            /*æ¸…é™¤åˆ†*/
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,3);
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,4);
         }
@@ -216,16 +216,16 @@ void clock(void)
     }
     else if(clock_change==SET_HOUR)
     {
-        /*Ê±ÉÁË¸*/
+        /*æ—¶é—ªçƒ*/
         if(light)
         {
-            /*ÏÔÊ¾Ê±*/
+            /*æ˜¾ç¤ºæ—¶*/
             LCD_DisplayDigit(hour/10,1);
             LCD_DisplayDigit(hour%10,2);
         }
         else if(~light)
         {
-            /*Çå³ıÊ±*/
+            /*æ¸…é™¤æ—¶*/
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,1);
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,2);
         }
@@ -234,16 +234,16 @@ void clock(void)
     }
     else if(clock_change==SET_DAY)
     {
-        /*ÈÕÉÁË¸*/
+        /*æ—¥é—ªçƒ*/
         if(light)
         {
-            /*ÏÔÊ¾ÈÕ*/
+            /*æ˜¾ç¤ºæ—¥*/
             LCD_DisplayDigit(day/10,8);
             LCD_DisplayDigit(day%10,7);
         }
         else if(~light)
         {
-            /*Çå³ıÈÕ*/
+            /*æ¸…é™¤æ—¥*/
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,7);
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,8);
         }
@@ -252,102 +252,102 @@ void clock(void)
     }
     else if(clock_change==SET_MONTH)
     {
-        /*ÔÂÉÁË¸*/
+        /*æœˆé—ªçƒ*/
         if(light)
         {
-            /*ÏÔÊ¾ÔÂ*/
+            /*æ˜¾ç¤ºæœˆ*/
             LCD_DisplayDigit(month/10,10);
             LCD_DisplayDigit(month%10,9);
         }
         else if(~light)
         {
-            /*Çå³ıÔÂ*/
+            /*æ¸…é™¤æœˆ*/
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,9);
             LCD_DisplayDigit(LCD_DIGIT_CLEAR,10);
         }
         light++;
         if(light==2) light=0;
     }
-    HT1621_Reflash(LCD_Buffer);                //¸üĞÂÏÔ´æ
+    HT1621_Reflash(LCD_Buffer);                //æ›´æ–°æ˜¾å­˜
 }
 
 
 
-/*ÏÔÊ¾ÎÂ¶È*/
+/*æ˜¾ç¤ºæ¸©åº¦*/
 void thermometer(void)
 {
-    LCD_DisplaySeg(_LCD_DEGREE);                        //"¡ãC"±êÖ¾
-    LCD_DisplaySeg(_LCD_DOT3);                          //ÎÂ¶ÈĞ¡Êıµã
+    LCD_DisplaySeg(_LCD_DEGREE);                        //"Â°C"æ ‡å¿—
+    LCD_DisplaySeg(_LCD_DOT3);                          //æ¸©åº¦å°æ•°ç‚¹
 
     ADC10CTL0 |= ENC + ADC10SC;                         // Sampling and conversion start
     while(ADC10CTL1&ADC10BUSY);
-    //-----ADC×ª»»Íê³ÉÖĞ¶Ï»½ĞÑCPUºó²ÅÖ´ĞĞÒÔÏÂ´úÂë-----
-    temp = ADC10MEM;                                    //¶ÁÈ¡AD²ÉÑùÖµ
+    //-----ADCè½¬æ¢å®Œæˆä¸­æ–­å”¤é†’CPUåæ‰æ‰§è¡Œä»¥ä¸‹ä»£ç -----
+    temp = ADC10MEM;                                    //è¯»å–ADé‡‡æ ·å€¼
     ADC10CTL0&=~ENC;
-    IntDeg= temp*42253/1023 - 27775;                    //×ª»»ÎªÉãÊÏ¶È£¬²¢100±¶´¦Àí
+    IntDeg= temp*42253/1023 - 27775;                    //è½¬æ¢ä¸ºæ‘„æ°åº¦ï¼Œå¹¶100å€å¤„ç†
 
-    if( IntDeg>=0)   LCD_ClearSeg(_LCD_NEG);            //ÕıÎÂ¶È£¬ÔòÇå³ı¸ººÅ
+    if( IntDeg>=0)   LCD_ClearSeg(_LCD_NEG);            //æ­£æ¸©åº¦ï¼Œåˆ™æ¸…é™¤è´Ÿå·
     else if(temp!=0)
     {
-        IntDeg=-IntDeg;                                 //¸ºÎÂ¶È£¬Ôò×ö¾ø¶ÔÖµ´¦Àí(Í¬Ê±·ÀÖ¹³¬Á¿³Ì)
-        LCD_DisplaySeg(_LCD_NEG);                       //¸ºÎÂ¶È£¬Ìí¼Ó¸ººÅ
+        IntDeg=-IntDeg;                                 //è´Ÿæ¸©åº¦ï¼Œåˆ™åšç»å¯¹å€¼å¤„ç†(åŒæ—¶é˜²æ­¢è¶…é‡ç¨‹)
+        LCD_DisplaySeg(_LCD_NEG);                       //è´Ÿæ¸©åº¦ï¼Œæ·»åŠ è´Ÿå·
     }
-    //-----Çå³ı4Î»ÏÔÊ¾Êı×Ö-----
+    //-----æ¸…é™¤4ä½æ˜¾ç¤ºæ•°å­—-----
     LCD_DisplayDigit(LCD_DIGIT_CLEAR,3);
     LCD_DisplayDigit(LCD_DIGIT_CLEAR,4);
     LCD_DisplayDigit(LCD_DIGIT_CLEAR,5);
     LCD_DisplayDigit(LCD_DIGIT_CLEAR,6);
-    //-----²ğ·Ö4Î»²¢ÏÔÊ¾Êı×Ö-----
+    //-----æ‹†åˆ†4ä½å¹¶æ˜¾ç¤ºæ•°å­—-----
 
     if(temp>0 && temp<1023)
     {
-        LCD_ClearSeg(_LCD_ERROR);//Çå³ı"Error"
-        if(IntDeg/10000>0) LCD_DisplayDigit(IntDeg/10000,2);            //°ÙÎ»Êı×Ö
-        if(IntDeg/1000>0) LCD_DisplayDigit((IntDeg%10000)/1000,3);      //Ê®Î»Êı×Ö
-        LCD_DisplayDigit((IntDeg%1000)/100,4);                          //¸öÎ»Êı×Ö
-        LCD_DisplayDigit((IntDeg%100)/10,5);                            //Ğ¡ÊıµÚÒ»Î»
-        LCD_DisplayDigit(IntDeg%10,6);                                  //Ğ¡ÊıµÚ¶şÎ»
+        LCD_ClearSeg(_LCD_ERROR);//æ¸…é™¤"Error"
+        if(IntDeg/10000>0) LCD_DisplayDigit(IntDeg/10000,2);            //ç™¾ä½æ•°å­—
+        if(IntDeg/1000>0) LCD_DisplayDigit((IntDeg%10000)/1000,3);      //åä½æ•°å­—
+        LCD_DisplayDigit((IntDeg%1000)/100,4);                          //ä¸ªä½æ•°å­—
+        LCD_DisplayDigit((IntDeg%100)/10,5);                            //å°æ•°ç¬¬ä¸€ä½
+        LCD_DisplayDigit(IntDeg%10,6);                                  //å°æ•°ç¬¬äºŒä½
     }
-    //³¬³öÁ¿³Ì£¬ÏÔÊ¾"Error"ºÍ"-----"
+    //è¶…å‡ºé‡ç¨‹ï¼Œæ˜¾ç¤º"Error"å’Œ"-----"
     else
     {
-        LCD_ClearSeg(_LCD_DOT3);                                        //Çå³ıĞ¡Êıµã
-        LCD_DisplaySeg(_LCD_ERROR);                                     //ÏÔÊ¾"Error"
-        LCD_DisplaySeg(_LCD_2G);                                        //ÏÔÊ¾"-"
-        LCD_DisplaySeg(_LCD_3G);                                        //ÏÔÊ¾"-"
-        LCD_DisplaySeg(_LCD_4G);                                        //ÏÔÊ¾"-"
-        LCD_DisplaySeg(_LCD_5G);                                        //ÏÔÊ¾"-"
-        LCD_DisplaySeg(_LCD_6G);                                        //ÏÔÊ¾"-"
+        LCD_ClearSeg(_LCD_DOT3);                                        //æ¸…é™¤å°æ•°ç‚¹
+        LCD_DisplaySeg(_LCD_ERROR);                                     //æ˜¾ç¤º"Error"
+        LCD_DisplaySeg(_LCD_2G);                                        //æ˜¾ç¤º"-"
+        LCD_DisplaySeg(_LCD_3G);                                        //æ˜¾ç¤º"-"
+        LCD_DisplaySeg(_LCD_4G);                                        //æ˜¾ç¤º"-"
+        LCD_DisplaySeg(_LCD_5G);                                        //æ˜¾ç¤º"-"
+        LCD_DisplaySeg(_LCD_6G);                                        //æ˜¾ç¤º"-"
     }
 
-    //-----¸üĞÂ»º´æ£¬ÕæÕıÏÔÊ¾-----
+    //-----æ›´æ–°ç¼“å­˜ï¼ŒçœŸæ­£æ˜¾ç¤º-----
     HT1621_Reflash(LCD_Buffer);
 }
 
 
-/*ÏÔÊ¾µçÑ¹*/
+/*æ˜¾ç¤ºç”µå‹*/
 void voltmeter(void)
 {
-    LCD_DisplaySeg(_LCD_DOT3);                      //Ğ¡Êıµã
-    LCD_DisplaySeg(_LCD_V);                         //"V"±êÖ¾
+    LCD_DisplaySeg(_LCD_DOT3);                      //å°æ•°ç‚¹
+    LCD_DisplaySeg(_LCD_V);                         //"V"æ ‡å¿—
     ADC10CTL0 |= ENC + ADC10SC;                     // Sampling and conversion start
 
     while(ADC10CTL1&ADC10BUSY);
-    //-----ADC×ª»»Íê³ÉÖĞ¶Ï»½ĞÑCPUºó²ÅÖ´ĞĞÒÔÏÂ´úÂë-----
-    temp = ADC10MEM;                                //¶ÁÈ¡AD²ÉÑùÖµ
-    voltage= temp*360/1023;                         //×ª»»ÎªµçÑ¹£¬²¢100±¶´¦Àí
+    //-----ADCè½¬æ¢å®Œæˆä¸­æ–­å”¤é†’CPUåæ‰æ‰§è¡Œä»¥ä¸‹ä»£ç -----
+    temp = ADC10MEM;                                //è¯»å–ADé‡‡æ ·å€¼
+    voltage= temp*360/1023;                         //è½¬æ¢ä¸ºç”µå‹ï¼Œå¹¶100å€å¤„ç†
 
-    //-----Çå³ı3Î»ÏÔÊ¾Êı×Ö-----
-    LCD_DisplayDigit(LCD_DIGIT_CLEAR,4);            //µçÑ¹¸öÎ»
-    LCD_DisplayDigit(LCD_DIGIT_CLEAR,5);            //µçÑ¹Ğ¡ÊıÒ»Î»
-    LCD_DisplayDigit(LCD_DIGIT_CLEAR,6);            //µçÑ¹Ğ¡Êı¶şÎ»
-    //-----²ğ·Ö3Î»²¢ÏÔÊ¾Êı×Ö-----
+    //-----æ¸…é™¤3ä½æ˜¾ç¤ºæ•°å­—-----
+    LCD_DisplayDigit(LCD_DIGIT_CLEAR,4);            //ç”µå‹ä¸ªä½
+    LCD_DisplayDigit(LCD_DIGIT_CLEAR,5);            //ç”µå‹å°æ•°ä¸€ä½
+    LCD_DisplayDigit(LCD_DIGIT_CLEAR,6);            //ç”µå‹å°æ•°äºŒä½
+    //-----æ‹†åˆ†3ä½å¹¶æ˜¾ç¤ºæ•°å­—-----
     if(voltage<360)
     {
-        LCD_ClearSeg(_LCD_ERROR);                   //Çå³ı"Error±êÖ¾"
-        LCD_DisplayDigit(voltage/100,4);            //µçÑ¹¸öÎ»
-        LCD_DisplayDigit((voltage%100)/10,5);       //µçÑ¹Ğ¡ÊıÒ»Î»
-        LCD_DisplayDigit(voltage%10,6);             //µçÑ¹Ğ¡Êı¶şÎ»
+        LCD_ClearSeg(_LCD_ERROR);                   //æ¸…é™¤"Erroræ ‡å¿—"
+        LCD_DisplayDigit(voltage/100,4);            //ç”µå‹ä¸ªä½
+        LCD_DisplayDigit((voltage%100)/10,5);       //ç”µå‹å°æ•°ä¸€ä½
+        LCD_DisplayDigit(voltage%10,6);             //ç”µå‹å°æ•°äºŒä½
     }
     else
     {
@@ -357,7 +357,7 @@ void voltmeter(void)
         LCD_DisplaySeg(_LCD_5G);
         LCD_DisplaySeg(_LCD_6G);
     }
-    //-----¸üĞÂ»º´æ£¬ÕæÕıÏÔÊ¾-----
+    //-----æ›´æ–°ç¼“å­˜ï¼ŒçœŸæ­£æ˜¾ç¤º-----
     HT1621_Reflash(LCD_Buffer);
 }
 
@@ -405,31 +405,31 @@ void freqmeter(void)
 
 
 
-void I2C_IODect(void)                            //¼ì²âÊÂ¼şÈ·Êµ·¢ÉúÁË
+void I2C_IODect(void)                            //æ£€æµ‹äº‹ä»¶ç¡®å®å‘ç”Ÿäº†
 {
     static unsigned char KEY_Past=0,KEY_Now=0;
     KEY_Past=KEY_Now;
 
-    //----ÅĞ¶ÏI2C_IO10ËùÁ¬µÄKEY1°´¼üÊÇ·ñ±»°´ÏÂ------
-    //KEY1ÊÇ¼Ó·¨°´Å¥
+    //----åˆ¤æ–­I2C_IO10æ‰€è¿çš„KEY1æŒ‰é”®æ˜¯å¦è¢«æŒ‰ä¸‹------
+    //KEY1æ˜¯åŠ æ³•æŒ‰é’®
     if((TCA6416A_InputBuffer&BIT8) == BIT8)
         KEY_Now |=BIT0;
     else
         KEY_Now &=~BIT0;
-    //----ÅĞ¶ÏI2C_IO11ËùÁ¬µÄKEY2°´¼üÊÇ·ñ±»°´ÏÂ------
-    //KEY2ÊÇ¼õ·¨°´Å¥
+    //----åˆ¤æ–­I2C_IO11æ‰€è¿çš„KEY2æŒ‰é”®æ˜¯å¦è¢«æŒ‰ä¸‹------
+    //KEY2æ˜¯å‡æ³•æŒ‰é’®
     if((TCA6416A_InputBuffer&BIT9)== BIT9)
         KEY_Now |=BIT1;
     else
         KEY_Now &=~BIT1;
-    //----ÅĞ¶ÏI2C_IO12ËùÁ¬µÄKEY3°´¼üÊÇ·ñ±»°´ÏÂ------
-    //KEY3ÊÇÇĞ»»ĞŞ¸ÄÏîÄ¿°´Å¥
+    //----åˆ¤æ–­I2C_IO12æ‰€è¿çš„KEY3æŒ‰é”®æ˜¯å¦è¢«æŒ‰ä¸‹------
+    //KEY3æ˜¯åˆ‡æ¢ä¿®æ”¹é¡¹ç›®æŒ‰é’®
     if((TCA6416A_InputBuffer&BITA) == BITA)
         KEY_Now |=BIT2;
     else
         KEY_Now &=~BIT2;
-    //----ÅĞ¶ÏI2C_IO13ËùÁ¬µÄKEY4°´¼üÊÇ·ñ±»°´ÏÂ------
-    //KEY4ÊÇÇĞ»»¹¦ÄÜ°´Å¥
+    //----åˆ¤æ–­I2C_IO13æ‰€è¿çš„KEY4æŒ‰é”®æ˜¯å¦è¢«æŒ‰ä¸‹------
+    //KEY4æ˜¯åˆ‡æ¢åŠŸèƒ½æŒ‰é’®
     if((TCA6416A_InputBuffer&BITB) ==  BITB)
         KEY_Now |=BIT3;
     else
@@ -539,11 +539,11 @@ void I2C_IODect(void)                            //¼ì²âÊÂ¼şÈ·Êµ·¢ÉúÁË
         task++;
         if(task==TASK_TEMPERATURE)
         {
-            ADC10_Temperature_Init();                       //³õÊ¼»¯ADC(ÎÂ¶È)
+            ADC10_Temperature_Init();                       //åˆå§‹åŒ–ADC(æ¸©åº¦)
         }
         else if(task==TASK_VOLTAGE)
         {
-            ADC10_Voltage_Init();                           //³õÊ¼»¯ADC(µçÑ¹)
+            ADC10_Voltage_Init();                           //åˆå§‹åŒ–ADC(ç”µå‹)
         }
         else if(task==TASK_FREQUENCY)
         {
@@ -752,24 +752,24 @@ __interrupt void Time0_Tick(void)
     static char cnt0 = 0;
     switch(TA0IV)
     {
-        case TA0IV_TACCR1://²¶×½±È½ÏÖĞ¶Ï1
+        case TA0IV_TACCR1://æ•æ‰æ¯”è¾ƒä¸­æ–­1
             if(cnt0 == 0)
             {
-                capvalue_1 = TA0CCR1;//±£´æµÚÒ»´Î²¶×½Öµ
-                timestamp_1 = timestamp;//±£´æµÚÒ»´ÎÊ±¼ä´Á
+                capvalue_1 = TA0CCR1;//ä¿å­˜ç¬¬ä¸€æ¬¡æ•æ‰å€¼
+                timestamp_1 = timestamp;//ä¿å­˜ç¬¬ä¸€æ¬¡æ—¶é—´æˆ³
                 cnt0 ++;
             }
             else
             {
-                capvalue_2 = TA0CCR1;//±£´æµÚ¶ş´Î²¶×½Öµ
-                timestamp_2 = timestamp;//±£´æµÚ¶ş´ÎÊ±¼ä´Á
+                capvalue_2 = TA0CCR1;//ä¿å­˜ç¬¬äºŒæ¬¡æ•æ‰å€¼
+                timestamp_2 = timestamp;//ä¿å­˜ç¬¬äºŒæ¬¡æ—¶é—´æˆ³
                 cnt0 = 0;
                 timestamp=0;
-                totaltime = (timestamp_2 - timestamp_1) * 50000 + capvalue_2 - capvalue_1;//¼ÆËã×ÜÊ±¼ä
+                totaltime = (timestamp_2 - timestamp_1) * 50000 + capvalue_2 - capvalue_1;//è®¡ç®—æ€»æ—¶é—´
                 freq = (float)(1000000.0) / totaltime;
             }
             break;
-        case TA0IV_TAIFG://Òç³öÖĞ¶Ï
+        case TA0IV_TAIFG://æº¢å‡ºä¸­æ–­
             timestamp ++;
             break;
         default:break;
